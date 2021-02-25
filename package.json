@@ -1,0 +1,22 @@
+{
+  "name": "flexo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "express": "^4.17.1"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "jsonwebtoken": "^8.5.1",
+    "less": "^4.1.1",
+    "pegjs": "^0.10.0",
+    "yaml": "^1.10.0"
+  }
+}
