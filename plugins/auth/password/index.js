@@ -7,12 +7,12 @@ exports.Plugin = engine => {
       this.store = engine.loadService(store);
     }
     async checkPassword(username, password) {
-      if (!await this.store.has(username)) return false;
-      const hash = await this.store.get(username);
+      const hash = await this.store.get(username) || "*";
       return await bcrypt.compare(password,hash);
     }
     async setPassword(username,password) {
       const hash = await bcrypt.hash(password,12);
+      console.log(hash);
       await this.store.set(username,hash);
     }
   }
