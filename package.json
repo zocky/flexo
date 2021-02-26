@@ -7,16 +7,22 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-    "express": "^4.17.1"
+    "bcrypt": "^5.0.0",
+    "express": "^4.17.1",
+    "keyv": "^4.0.3",
+    "keyv-file": "^0.2.0"
   },
   "devDependencies": {
     "express": "^4.17.1"
   },
   "dependencies": {
+    "@keyv/sqlite": "^2.0.2",
     "cookie-parser": "^1.4.5",
     "jsonwebtoken": "^8.5.1",
     "less": "^4.1.1",
+    "merge-deep": "^3.0.3",
     "pegjs": "^0.10.0",
+    "sqlite3": "^4.2.0",
     "yaml": "^1.10.0"
   }
 }
