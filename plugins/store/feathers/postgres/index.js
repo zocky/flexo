@@ -4,15 +4,17 @@ const Path = require("path");
 
 exports.Plugin = engine => {
   return class PluginStoreFile extends engine.Plugin.Store.Feathers {
-    constructor(engine, { connection, table, searchPath = [], ...rest }) {
+    constructor(engine, { connection, table, idField, searchPath = [], ...rest }) {
       super(engine, { ...rest });
-      const filename = this.filename = Path.resolve(engine.config.dataDirectory,file);
       const Model= knex({
         client: 'pg',
-        connection,
-        searchpath
+        connection
       });
-      this.db = service({Model,name:table});
+      this.db = service({
+        Model,
+        name:table,
+        id:idField
+      });
     }
   }
 }
