@@ -1,11 +1,21 @@
 exports.Plugin = engine => class UsersBasic extends engine.Plugin {
 
-  constructor(engine, { store, ...rest }) {
+  constructor(engine, { store, auth = [], ...rest }) {
     super(engine, rest);
-    console.log('users', store)
     this.store = engine.getOrCreateService(store);
+    auth = [].concat(auth);
+    for (const a of auth) {
+      console.log('loading auth',a)
+      const service = engine.getOrCreateService(a);
+      service.on('success', async (req, res, info, profile) => {
+        await this.loginOrRegister(res, info, profile);
+      })
+      service.on('fail', async (req, res, info, profile) => {
+        await this.logout(res);
+      })
+    }
   }
-
+  
   authIdField(authId) {
     return '_auth_' + authId + '_id';
   }
@@ -28,7 +38,7 @@ exports.Plugin = engine => class UsersBasic extends engine.Plugin {
     username = await this.findAvailableUsername(username);
     const idField = this.authIdField(authId);
     const profileField = this.authProfileField(authId);
-    console.log('create new user',authId,userId,username);
+    console.log('create new user', authId, userId, username);
     await this.store.create({
       username,
       [idField]: userId,
@@ -54,10 +64,10 @@ exports.Plugin = engine => class UsersBasic extends engine.Plugin {
  * @param {object} profile the user data returned by the authority
  */
   getOrCreate = async ({
-      authId,
-      userId,
-      username
-    },
+    authId,
+    userId,
+    username
+  },
     profile
   ) => {
     const oldUser = await this.getByAuthId(authId, userId);
@@ -78,6 +88,9 @@ exports.Plugin = engine => class UsersBasic extends engine.Plugin {
     const user = await this.getOrCreate(...args);
     if (user) await engine.login(res, user.username);
     else await this.logout(res);
+
+
+
   }
 
   logout = async (res) => {
@@ -87,6 +100,10 @@ exports.Plugin = engine => class UsersBasic extends engine.Plugin {
   service = {
     ...this.service,
     loginOrRegister: this.loginOrRegister,
-    logout: this.logout
+    logout: this.logout,
+    find:(...args) => {
+      return this.store.find(...args)
+    }
+  
   }
 }

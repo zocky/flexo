@@ -6,8 +6,8 @@ exports.Plugin = engine => class AuthPasswordless extends engine.Plugin.Auth {
   }
 
   authenticate = async (req,res) => {
-    const { email } = req.params;
-    const { token } = req.query;
+    const { token,email } = req.query;
+    console.log('auth',email,token)
     const stored = await this.store.get(email);
     if (stored === token) {
       this.success(req,res,{email});
@@ -15,10 +15,19 @@ exports.Plugin = engine => class AuthPasswordless extends engine.Plugin.Auth {
       this.fail(req,res);
     }
   }
-  send = async (email) => {
+  extractInfo = profile => ({
+    userId: profile.email,
+    username: profile.email.split('@')[0],
+    email: profile.email
+  })
+  createToken = async (email) => {
     const token = engine.utils.randomString();
     this.store.set(email, token);
-    const url = engine.fullUrlFor('/_auth/'+this.name+'/:email', { email, token });
+    return token;
+  }
+  sendLink = async (email) => {
+    const token = await this.createToken(email);
+    const url = engine.fullUrlFor('/_auth/'+this.name, { email, token });
 
     await this.email.send({
       from: 'no-reply@ljudmila.org',
@@ -29,6 +38,6 @@ exports.Plugin = engine => class AuthPasswordless extends engine.Plugin.Auth {
   }
   service = {
     ... this.service,
-    send: this.send
+    sendLink: this.sendLink
   }
 }
