@@ -14,16 +14,14 @@ exports.Plugin = engine => class AuthGoogle extends engine.Plugin.Auth.Passport 
     this.scope = ['auth/userinfo.email', ...scope].map(
       it => engine.utils.urlResolve('https://www.googleapis.com', it)
     )
-    this.authArgs = [{ scope:this.scope }];
+    this.authArgs = [{ scope: this.scope }];
 
     this.strategy = new GoogleStrategy({
       clientID,
       clientSecret,
       callbackURL
     },
-      function (accessToken, refreshToken, profile, cb) {
-        return cb(null, profile);
-      }
+      this.strategyCallback
     );
     this.setupRoutes('google', {
       scope: [
@@ -32,4 +30,6 @@ exports.Plugin = engine => class AuthGoogle extends engine.Plugin.Auth.Passport 
       ]
     });
   }
+  suggestUsername = profile => profile.emails[0].value.split('@')[0];
+  extractEmail = profile => profile.emails[0].value
 }

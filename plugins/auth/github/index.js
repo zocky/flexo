@@ -15,9 +15,7 @@ exports.Plugin = engine => class AuthGithub extends engine.Plugin.Auth.Passport 
       clientSecret,
       callbackURL
     },
-      function (accessToken, refreshToken, profile, cb) {
-        return cb(null, profile);
-      }
+      this.strategyCallback
     );
     this.setupRoutes('github');
   }
