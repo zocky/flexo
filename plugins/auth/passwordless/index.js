@@ -3,7 +3,6 @@ exports.Plugin = engine => class AuthPasswordless extends engine.Plugin.Auth {
     super(engine, rest);
     this.store = engine.getOrCreateService(store);
     this.email = engine.getOrCreateService(email);
-    this.setupRoutes();
   }
 
   authenticate = async (req,res) => {
@@ -15,10 +14,6 @@ exports.Plugin = engine => class AuthPasswordless extends engine.Plugin.Auth {
     } else {
       this.fail(req,res);
     }
-  }
-
-  setupRoutes() {
-    engine.addRoute('get','/_auth/'+this.name+'/:email',this.authenticate);
   }
   send = async (email) => {
     const token = engine.utils.randomString();

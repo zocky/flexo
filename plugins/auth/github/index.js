@@ -1,23 +1,14 @@
 
 exports.Plugin = engine => class AuthGithub extends engine.Plugin.Auth.Passport {
-  static requires = ['passport-github'];
-  constructor(engine, {
-    clientID,
-    clientSecret,
-    callbackURL,
-    ...rest
-  }) {
-    super(engine, rest);
-    
-    const GitHubStrategy = require('passport-github').Strategy;
-    this.strategy = new GitHubStrategy({
-      clientID,
-      clientSecret,
-      callbackURL
-    },
-      this.strategyCallback
-    );
-    this.setupRoutes('github');
+  constructor(engine, { clientID, clientSecret, callbackURL, ...rest }) {
+    super(engine, { ...rest, strategy: {
+      Strategy: require('passport-github').Strategy,
+      options: { clientID, clientSecret, callbackURL }
+    }});
   }
+  extractInfo = profile => ({
+    userId: profile.id,
+    username: profile.username,
+    email: profile.email
+  })
 }
-  
