@@ -1,6 +1,6 @@
-const GitHubStrategy = require('passport-github').Strategy;
 
 exports.Plugin = engine => class AuthGithub extends engine.Plugin.Auth.Passport {
+  static requires = ['passport-github'];
   constructor(engine, {
     clientID,
     clientSecret,
@@ -8,7 +8,8 @@ exports.Plugin = engine => class AuthGithub extends engine.Plugin.Auth.Passport 
     ...rest
   }) {
     super(engine, rest);
-    console.log(callbackURL);
+    
+    const GitHubStrategy = require('passport-github').Strategy;
     this.strategy = new GitHubStrategy({
       clientID,
       clientSecret,
@@ -18,8 +19,7 @@ exports.Plugin = engine => class AuthGithub extends engine.Plugin.Auth.Passport 
         return cb(null, profile);
       }
     );
-    this.setup('github');
+    this.setupRoutes('github');
   }
- 
 }
   

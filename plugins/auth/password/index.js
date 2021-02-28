@@ -4,7 +4,7 @@ exports.Plugin = engine => {
   return class AuthHtpasswd extends engine.Plugin.Auth.Password {
     constructor(engine, { store, ...rest }) {
       super(engine, rest);
-      this.store = engine.loadService(store);
+      this.store = engine.getOrCreateService(store);
     }
     async checkPassword(username, password) {
       const hash = await this.store.get(username) || "*";
