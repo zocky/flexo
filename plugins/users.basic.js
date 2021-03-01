@@ -1,12 +1,14 @@
-exports.Plugin = engine => class UsersBasic extends engine.Plugin {
+const { Plugin } = require("../lib/Plugin")
+exports.Plugin = class UsersBasic extends Plugin {
 
   constructor(engine, { store, auth = [], ...rest }) {
     super(engine, rest);
-    this.store = engine.getOrCreateService(store);
-    auth = [].concat(auth);
+  }
+  setup() {
+    this.store = this.engine.getOrCreateService(this.conf.store);
+    let auth = [].concat(this.conf.auth);
     for (const a of auth) {
-      console.log('loading auth',a)
-      const service = engine.getOrCreateService(a);
+      const service = this.engine.getOrCreateService(a);
       service.on('success', async (req, res, info, profile) => {
         await this.loginOrRegister(res, info, profile);
       })
@@ -14,8 +16,13 @@ exports.Plugin = engine => class UsersBasic extends engine.Plugin {
         await this.logout(res);
       })
     }
+    this.engine.routerUse(async (req, res) => {
+      if (req.userId) {
+        req.user = await this.get(req.userId);
+      }
+    })
   }
-  
+
   authIdField(authId) {
     return '_auth_' + authId + '_id';
   }
@@ -86,24 +93,15 @@ exports.Plugin = engine => class UsersBasic extends engine.Plugin {
    */
   loginOrRegister = async (res, ...args) => {
     const user = await this.getOrCreate(...args);
-    if (user) await engine.login(res, user.username);
+    if (user) await this.engine.login(res, user.username);
     else await this.logout(res);
-
-
-
   }
 
   logout = async (res) => {
-    await engine.logout(res);
+    awaitthis.engine.logout(res);
   }
 
-  service = {
-    ...this.service,
-    loginOrRegister: this.loginOrRegister,
-    logout: this.logout,
-    find:(...args) => {
-      return this.store.find(...args)
-    }
-  
+  get = (username) => {
+    return this.store.findOne({ username });
   }
 }

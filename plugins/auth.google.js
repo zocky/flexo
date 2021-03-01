@@ -1,6 +1,9 @@
-exports.Plugin = engine => class AuthGoogle extends engine.Plugin.Auth.Passport {
+const { Plugin } = require("../lib/Plugin")
+
+exports.Plugin = class AuthGoogle extends Plugin.Auth.Passport {
+
   constructor(engine, { clientID, clientSecret, callbackURL, scope = [], ...rest }) {
-    scope = ['auth/userinfo.email', ...scope].map(
+    scope = [, ...scope].map(
       it => engine.utils.urlResolve('https://www.googleapis.com', it)
     )
     super(engine, { ...rest, strategy: {
@@ -11,6 +14,7 @@ exports.Plugin = engine => class AuthGoogle extends engine.Plugin.Auth.Passport 
 
     this.scope = scope;
   }
+  
 
   extractInfo = profile => ({
     userId: profile.id,
