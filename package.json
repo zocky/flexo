@@ -16,6 +16,7 @@
     "express": "^4.17.1"
   },
   "dependencies": {
+    "@handlebars/allow-prototype-access": "^1.0.3",
     "@keyv/sqlite": "^2.0.2",
     "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
