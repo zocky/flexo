@@ -1,9 +1,6 @@
 const { Plugin } = require("../lib/Plugin")
 exports.Plugin = class UsersBasic extends Plugin {
-
-  constructor(engine, { store, auth = [], ...rest }) {
-    super(engine, rest);
-  }
+ 
   setup() {
     this.store = this.engine.getOrCreateService(this.conf.store);
     let auth = [].concat(this.conf.auth);
@@ -45,7 +42,7 @@ exports.Plugin = class UsersBasic extends Plugin {
     username = await this.findAvailableUsername(username);
     const idField = this.authIdField(authId);
     const profileField = this.authProfileField(authId);
-    console.log('create new user', authId, userId, username);
+    this.debug('create new user', authId, userId, username);
     await this.store.create({
       username,
       [idField]: userId,

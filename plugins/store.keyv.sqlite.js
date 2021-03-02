@@ -3,9 +3,12 @@ const Keyv = require('keyv');
 const Path = require("path");
 
 exports.Plugin = class PluginStoreFile extends Plugin.Store.Key {
-  constructor(engine, { file, ...rest }) {
-    super(engine, { ...rest });
-    const filename = this.filename = engine.resolveDataPath(file);
-    this.map = new Keyv('sqlite://' + filename);
+  settings = {
+    ...this.settings,
+    file: this.engine.resolveDataPath
+  }
+  setup () {
+    super.setup();
+    this.map = new Keyv('sqlite://' + this.settings.file);
   }
 }

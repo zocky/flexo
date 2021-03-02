@@ -3,12 +3,16 @@ const Keyv = require('keyv');
 const KeyvFile = require('keyv-file').KeyvFile
 const Path = require("path");
 
-exports.Plugin = class PluginStoreFile extends Plugin.Store.Key {
-  constructor(engine, { file, ...rest }) {
-    super(engine, { ...rest });
-    const filename = this.filename = engine.resolveDataPath(file)
+exports.Plugin = class StoreKeyvFile extends Plugin.Store.Key {
+  
+  settings = {
+    ...this.settings,
+    file: this.engine.resolveDataPath
+  }
+  setup() {
+    super.setup();
     this.map = new Keyv({
-      store: new KeyvFile({ filename })
+      store: new KeyvFile({ filename:this.settings.file })
     });
   }
 }

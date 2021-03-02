@@ -4,16 +4,25 @@ const feathersService = require('feathers-knex');
 const Path = require("path");
 
 exports.Plugin = class PluginStorePostgres extends Plugin.Store.Feathers {
-  constructor(engine, { connection, table, idField, searchPath = [], ...rest }) {
-    super(engine, { ...rest });
+
+  settings = {
+    ...this.settings,
+    connection: Object,
+    table: String,
+    idField: String
+  }
+  setup() {
+    super.setup()
+    const { connection, table: name, idField: id } = this.settings;
+
     const Model = knex({
       client: 'pg',
       connection
     });
     this.db = feathersService({
       Model,
-      name: table,
-      id: idField
+      name,
+      id
     });
   }
 }

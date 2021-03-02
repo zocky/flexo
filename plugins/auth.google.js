@@ -2,19 +2,25 @@ const { Plugin } = require("../lib/Plugin")
 
 exports.Plugin = class AuthGoogle extends Plugin.Auth.Passport {
 
-  constructor(engine, { clientID, clientSecret, callbackURL, scope = [], ...rest }) {
-    scope = [, ...scope].map(
-      it => engine.utils.urlResolve('https://www.googleapis.com', it)
-    )
-    super(engine, { ...rest, strategy: {
-      Strategy: require('passport-google-oauth').OAuth2Strategy,
-      options: { clientID, clientSecret, callbackURL },
-      args: [{ scope }]
-    }});
-
-    this.scope = scope;
+  settings = {
+    ...this.settings,
+    clientID: String,
+    clientSecret: String,
+    callbackURL: String,
+    scope: (scope = []) => {
+      scope = ['auth/userinfo.email', ...scope];
+      scope = scope.map(it => this.utils.urlResolve('https://www.googleapis.com', it));
+      return scope;
+    }
   }
-  
+
+  setup() {
+    const { clientID, clientSecret, callbackURL, scope } = this.settings;
+    this.Strategy = require('passport-google-oauth').OAuth2Strategy;
+    this.strategyOptions = { clientID, clientSecret, callbackURL };
+    this.authArgs = [{ scope }]
+    super.setup();
+  }
 
   extractInfo = profile => ({
     userId: profile.id,

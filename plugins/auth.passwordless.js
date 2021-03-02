@@ -15,7 +15,7 @@ exports.Plugin = class AuthPasswordless extends Plugin.Auth {
 
   authenticate = async (req, res) => {
     const { token, email } = req.query;
-    console.log('auth', email, token)
+    this.debug('auth', email, token)
     const stored = await this.store.get(email);
     if (stored === token) {
       this.success(req, res, { email });
@@ -30,7 +30,6 @@ exports.Plugin = class AuthPasswordless extends Plugin.Auth {
   })
   createToken = async (email) => {
     const token = this.engine.utils.randomString();
-    console.log(this.store);
     this.store.set(email, token);
     return token;
   }

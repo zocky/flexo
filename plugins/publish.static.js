@@ -1,17 +1,17 @@
-const { PluginPublish } = require("../lib/Plugin")
+const { PluginPublish } = require("../lib/Plugin/PluginPublish")
 
 exports.Plugin = class PublishStatic extends PluginPublish {
-  constructor(engine, {
-    filepath = null,
-    recursive = null,
-    ... rest 
-  }) {
-    super(engine, rest);
-    Object.assign(this,{
-      filepath:engine.resolvePath(filepath),
-      recursive
-    })
-    this.filepath = filepath;
+
+  settings = {
+    ...this.settings,
+    directory: dir => this.engine.resolvePath(dir || 'public')
+  }
+
+  setup() {
+    super.setup();
+    const express = require("express");
+    const { url, directory } = this.settings;
+    this.engine.routerUseAt(url,express.static(directory));
   }
 
 }
